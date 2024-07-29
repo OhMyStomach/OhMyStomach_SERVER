@@ -18,4 +18,7 @@ public class Smoke {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String district;
+    private String type;
+    private String location;
 }
