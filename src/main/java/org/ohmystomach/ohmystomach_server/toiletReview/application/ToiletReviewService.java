@@ -1,13 +1,15 @@
-package org.ohmystomach.ohmystomach_server.review.application;
+package org.ohmystomach.ohmystomach_server.toiletReview.application;
 
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
-import org.ohmystomach.ohmystomach_server.review.dao.ToiletReviewRepository;
-import org.ohmystomach.ohmystomach_server.review.domain.ToiletReview;
-import org.ohmystomach.ohmystomach_server.review.dto.request.CreateToiletReviewServiceRequestDto;
-import org.ohmystomach.ohmystomach_server.review.dto.request.UpdateToiletReviewServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.toiletReview.dao.ToiletReviewRepository;
+import org.ohmystomach.ohmystomach_server.toiletReview.domain.ToiletReview;
+import org.ohmystomach.ohmystomach_server.toiletReview.dto.request.CreateToiletReviewServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.toiletReview.dto.request.UpdateToiletReviewServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.toilet.application.ToiletService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +18,13 @@ import java.util.Optional;
  * 리뷰 관련 비즈니스 로직을 처리하는 서비스 클래스.
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ToiletReviewService {
 
   // ReviewRepository 의존성 주입, 리뷰 데이터베이스 작업 처리
   private final ToiletReviewRepository reviewRepository;
+  private final ToiletService toiletService;
 
   /**
    * 특정 화장실의 리뷰 목록을 조회합니다.
@@ -54,7 +58,7 @@ public class ToiletReviewService {
    * @return 저장된 리뷰 객체.
    */
   public ApiResponse<ToiletReview> addReview(CreateToiletReviewServiceRequestDto dto) {
-    ToiletReview savedReview = reviewRepository.save(dto.toEntity());
+    ToiletReview savedReview = reviewRepository.save(dto.toEntity(toiletService.getToiletById(dto.toiletId()).getData()));
     return ApiResponse.ok("후기 등록을 완료했습니다.", savedReview);
   }
 

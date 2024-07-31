@@ -1,4 +1,4 @@
-package org.ohmystomach.ohmystomach_server.review.dto.request;
+package org.ohmystomach.ohmystomach_server.toiletReview.dto.request;
 
 public record UpdateToiletReviewServiceRequestDto(
         String username,  // 작성자 이름

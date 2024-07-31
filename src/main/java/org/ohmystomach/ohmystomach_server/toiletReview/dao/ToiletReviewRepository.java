@@ -1,6 +1,6 @@
-package org.ohmystomach.ohmystomach_server.review.dao;
+package org.ohmystomach.ohmystomach_server.toiletReview.dao;
 
-import org.ohmystomach.ohmystomach_server.review.domain.ToiletReview;
+import org.ohmystomach.ohmystomach_server.toiletReview.domain.ToiletReview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

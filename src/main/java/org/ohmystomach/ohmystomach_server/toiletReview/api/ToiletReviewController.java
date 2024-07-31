@@ -1,13 +1,13 @@
-package org.ohmystomach.ohmystomach_server.review.api;
+package org.ohmystomach.ohmystomach_server.toiletReview.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
-import org.ohmystomach.ohmystomach_server.review.application.ToiletReviewService;
-import org.ohmystomach.ohmystomach_server.review.domain.ToiletReview;
-import org.ohmystomach.ohmystomach_server.review.dto.request.CreateToiletReviewRequestDto;
-import org.ohmystomach.ohmystomach_server.review.dto.request.UpdateToiletReviewRequestDto;
+import org.ohmystomach.ohmystomach_server.toiletReview.application.ToiletReviewService;
+import org.ohmystomach.ohmystomach_server.toiletReview.domain.ToiletReview;
+import org.ohmystomach.ohmystomach_server.toiletReview.dto.request.CreateToiletReviewRequestDto;
+import org.ohmystomach.ohmystomach_server.toiletReview.dto.request.UpdateToiletReviewRequestDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +20,6 @@ public class ToiletReviewController {
 
   // ReviewService 의존성 주입, 리뷰 관련 비즈니스 로직 처리
   private final ToiletReviewService reviewService;
-
   /**
    * 특정 화장실의 리뷰 목록을 조회합니다.
    *
@@ -31,7 +30,7 @@ public class ToiletReviewController {
   @Operation(summary = "특정 화장실의 후기 전체 조회 API")
   @GetMapping("/toilets/{toiletId}")
   public ApiResponse<List<ToiletReview>> getReviewsByToiletId(@PathVariable Long toiletId,
-                                                                     @RequestParam(defaultValue = "latest") String sort) {
+                                                              @RequestParam(defaultValue = "latest") String sort) {
     return reviewService.getReviewsByToiletId(toiletId, sort);
   }
 
@@ -52,6 +51,7 @@ public class ToiletReviewController {
           "   */")
   @PostMapping
   public ApiResponse<ToiletReview> addReview(@RequestBody CreateToiletReviewRequestDto dto) {
+
     return reviewService.addReview(dto.toServiceRequest());
   }
 

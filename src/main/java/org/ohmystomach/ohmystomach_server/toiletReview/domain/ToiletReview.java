@@ -1,10 +1,10 @@
-package org.ohmystomach.ohmystomach_server.review.domain;
+package org.ohmystomach.ohmystomach_server.toiletReview.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ohmystomach.ohmystomach_server.review.dto.request.UpdateToiletReviewServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.toiletReview.dto.request.UpdateToiletReviewServiceRequestDto;
 import org.ohmystomach.ohmystomach_server.toilet.domain.Toilet;
 
 import java.time.LocalDateTime;
@@ -29,10 +29,11 @@ public class ToiletReview {
   private Toilet toilet;  // 후기 대상 화장실
 
   @Builder
-  public ToiletReview(String username, String content, int rating) {
+  public ToiletReview(String username, String content, int rating, Toilet toilet) {
     this.username = username;
     this.content = content;
     this.rating = rating;
+    this.toilet = toilet;
   }
 
   public void update(UpdateToiletReviewServiceRequestDto dto) {
