@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "흡역구역 후기 API", description = "흡역구역 후기 생성, 조회, 수정, 삭제")
+@Tag(name = "흡연구역 후기 API", description = "흡연구역 후기 생성, 조회, 수정, 삭제")
 @RestController
 @RequestMapping("/api/smoke/reviews")
 @RequiredArgsConstructor
