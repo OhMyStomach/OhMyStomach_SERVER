@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.*;
 
+import java.util.ArrayList;
+
 @Entity
 @Data
 @Builder
@@ -21,4 +23,6 @@ public class User {
 
     private String profileImageUrl;
 
+    public <E> User(String username, String password, ArrayList<E> es) {
+    }
 }
