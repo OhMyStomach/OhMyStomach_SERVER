@@ -1,6 +1,6 @@
-package org.ohmystomach.ohmystomach_server.toilet.dao;
+package org.ohmystomach.ohmystomach_server.domain.toilet.dao;
 
-import org.ohmystomach.ohmystomach_server.toilet.domain.Toilet;
+import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package org.ohmystomach.ohmystomach_server.toilet.domain;
+package org.ohmystomach.ohmystomach_server.domain.toilet.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -24,7 +24,10 @@ public enum ErrorCode {
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, "승인되지 않은 사용자입니다."),
 
     // user
-    INVALID_USER_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 USER 식별자입니다.");
+    INVALID_USER_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 USER 식별자입니다."),
+
+    // review
+    INVALID_REVIEW_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 review 식별자입니다.");
 
     private final HttpStatus status;
     private final String message;

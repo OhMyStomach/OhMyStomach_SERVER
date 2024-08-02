@@ -1,6 +1,6 @@
-package org.ohmystomach.ohmystomach_server.review.dao;
+package org.ohmystomach.ohmystomach_server.domain.toiletReview.dao;
 
-import org.ohmystomach.ohmystomach_server.review.domain.Review;
+import org.ohmystomach.ohmystomach_server.domain.toiletReview.domain.ToiletReview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * 리뷰 엔티티와 데이터베이스 간의 상호작용을 담당하는 리포지토리 인터페이스.
  */
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ToiletReviewRepository extends JpaRepository<ToiletReview, Long> {
 
 
 
@@ -20,7 +20,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
    * @param toiletId 조회할 화장실의 ID.
    * @return 생성일자 내림차순으로 정렬된 리뷰 리스트.
    */
-  List<Review> findByToiletIdOrderByCreatedDateDesc(Long toiletId);
+  List<ToiletReview> findByToiletIdOrderByCreatedDateDesc(Long toiletId);
 
 
 
@@ -32,7 +32,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
    * @param toiletId 조회할 화장실의 ID.
    * @return 별점 높은 순으로 정렬된 리뷰 리스트.
    */
-  List<Review> findByToiletIdOrderByRatingDesc(Long toiletId);
+  List<ToiletReview> findByToiletIdOrderByRatingDesc(Long toiletId);
 
 
 
@@ -45,5 +45,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
    * @param toiletId 조회할 화장실의 ID.
    * @return 별점 낮은 순으로 정렬된 리뷰 리스트.
    */
-  List<Review> findByToiletIdOrderByRatingAsc(Long toiletId);
+  List<ToiletReview> findByToiletIdOrderByRatingAsc(Long toiletId);
 }
