@@ -22,6 +22,7 @@ public class UserService {
         String uuid = userInfo.get("id").toString();
         Optional<User> optionalUser = userRepository.findById(uuid);
         if(optionalUser.isEmpty()) {
+            System.out.println("11111111111111");
             return this.createUser(userInfo);
         }
         User savedUser = optionalUser.get();

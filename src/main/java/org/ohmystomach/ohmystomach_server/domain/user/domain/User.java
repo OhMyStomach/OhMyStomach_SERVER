@@ -22,7 +22,4 @@ public class User {
     private String email;
 
     private String profileImageUrl;
-
-    public <E> User(String username, String password, ArrayList<E> es) {
-    }
 }
