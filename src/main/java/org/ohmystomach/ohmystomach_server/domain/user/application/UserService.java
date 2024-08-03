@@ -37,13 +37,18 @@ public class UserService {
     }
 
     private ApiResponse<User> createUser(Map<String, Object> userInfo) {
+        Map<String, Object> kakao_account = (Map<String, Object>) userInfo.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");
         String uuid = userInfo.get("id").toString();
-        String email = (String) ((Map<String, Object>) userInfo.get("kakao_account")).get("email");
-        String name = (String) ((Map<String, Object>) userInfo.get("properties")).get("nickname");
+        String email = (String) kakao_account.get("email");
+        String profile_image_url = (String) profile.get("profile_image_url");
+        String name = (String) profile.get("nickname");
+        System.out.println(name);
         User user = User.builder()
                 .id(uuid)
                 .email(email)
                 .nickname(name)
+                .profileImageUrl(profile_image_url)
                 .build();
         User savedUser = userRepository.save(user);
         return ApiResponse.ok("사용자 정보를 성공적으로 등록했습니다.", savedUser);

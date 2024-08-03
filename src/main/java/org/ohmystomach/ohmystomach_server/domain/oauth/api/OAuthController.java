@@ -1,6 +1,7 @@
 package org.ohmystomach.ohmystomach_server.domain.oauth.api;
 
-import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.oauth.application.JWTService;
 import org.ohmystomach.ohmystomach_server.domain.oauth.application.KakaoService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Tag(name = "회원가입/로그인 API", description = "회원가입, 로그인, 사용자 정보 조회 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
@@ -34,21 +36,18 @@ public class OAuthController {
 ////  }
 //
 
+  @Operation(summary="리다이렉션 url 반환 API")
   @GetMapping("/login")
   public ApiResponse<String> getKakaoLoginUrl() {
     return kakaoService.getKakaoLoginUrl();
   }
 
+  @Operation(summary="로그인 후 콜백 메소드")
   @GetMapping("/callback")
-  public ApiResponse<String> kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
-    try {
-      System.out.println("0000000000000000000000000");
-      String accessToken = kakaoService.getAccessToken(code);
-      Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
-    } catch (Exception e) {
-      e.printStackTrace();
-
-    }
+  public ApiResponse<String> kakaoLogin(@RequestParam("code") String code) {
+    System.out.println("0000000000000000000000000");
+    String accessToken = kakaoService.getAccessToken(code);
+    Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
 
 //    String uuid = userInfo.get("id").toString();
 //    String email = (String) ((Map<String, Object>) userInfo.get("kakao_account")).get("email");
@@ -68,6 +67,7 @@ public class OAuthController {
     return jwtService.encodeToken(userService.retrieveOrCreateUser(userInfo).getData().getId());
   }
 //
+  @Operation(summary="유저 정보 조회 API", description = "JWT 토큰으로 유저 정보 조회 API")
   @GetMapping("/user")
   public ApiResponse<User> getUserInfo(@RequestHeader("Authorization") String token) {
     String jwt = token.substring(7); // "Bearer " 제거
