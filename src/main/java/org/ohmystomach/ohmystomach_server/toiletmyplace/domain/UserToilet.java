@@ -25,4 +25,9 @@ public class UserToilet {
 
     @ManyToOne
     private Toilet toilet;
+
+    public UserToilet(Long userId, Toilet toilet) {
+        this.userId = userId;
+        this.toilet = toilet;
+    }
 }

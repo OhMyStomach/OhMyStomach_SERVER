@@ -1,15 +1,15 @@
 package org.ohmystomach.ohmystomach_server.smokemyplace.application;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.smokemyplace.domain.UserSmoke;
 import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
-import org.ohmystomach.ohmystomach_server.smokemyplace.dao.UserSmokeRepository;
 import org.ohmystomach.ohmystomach_server.domain.smoke.dao.SmokeRepository;
-import org.ohmystomach.ohmystomach_server.user.dao.UserRepository;
 
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -18,52 +18,80 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserSmokeService {
-    // UserSmokeRepository, SmokeRepository, UserRepository 의존성 주입, 사용자가 저장한 흡연구역 데이터베이스 작업 처리
-    private final UserSmokeRepository userSmokeRepository;
     private final SmokeRepository smokeRepository;
-    private final UserRepository userRepository;
+
+    // In-memory storage for user-specific smoking areas
+    private final Map<Long, List<UserSmoke>> userSmokeMap = new HashMap<>();
 
     /**
      * 사용자가 저장한 흡연구역의 목록을 조회합니다.
      *
      * @param userId 조회할 사용자의 ID.
-     * @return 조회된 사용자가 저장한 흡연구역 목록.
+     * @return 조회된 사용자가 저장한 흡연구역 목록을 포함하는 ApiResponse.
      */
-    public List<Smoke> getUserSavedSmokes(Long userId) {
-        return userSmokeRepository.findByUserId(userId).stream()
+    public ApiResponse<List<Smoke>> getUserSavedSmokes(Long userId) {
+        List<UserSmoke> userSmokes = userSmokeMap.getOrDefault(userId, new ArrayList<>());
+        List<Smoke> smokes = userSmokes.stream()
                 .map(UserSmoke::getSmoke)
                 .collect(Collectors.toList());
+        return ApiResponse.ok("흡연구역 목록을 성공적으로 조회했습니다.", smokes);
     }
 
     /**
      * 새로운 흡연구역을 사용자의 내 장소로 저장합니다.
      *
      * @param userId 조회할 사용자의 ID.
-     * @param smokeId 저장할 흡연구역의 ID.
-     * @return 저장된 화장실 객체.
+     * @param smoke  저장할 흡연구역 객체.
+     * @return 저장된 UserSmoke 객체를 포함하는 ApiResponse.
      */
-    public UserSmoke saveUserSmoke(Long userId, Long smokeId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다. \nID: " + userId));
-        Smoke smoke = smokeRepository.findById(smokeId)
-                .orElseThrow(() -> new RuntimeException("흡연구역을 찾을 수 없습니다. \nID: " + smokeId));
+    public ApiResponse<UserSmoke> saveUserSmoke(Long userId, Smoke smoke) {
+        // 사용자에 대한 흡연구역 리스트를 가져오거나 새로 생성합니다.
+        List<UserSmoke> userSmokes = userSmokeMap.computeIfAbsent(userId, k -> new ArrayList<>());
 
-        UserSmoke userSmoke = new UserSmoke(user, smoke);
-        return userSmokeRepository.save(userSmoke);
+        Smoke existingSmoke = null;
+        // 기존 Smoke 엔티티에서 주어진 smokeId를 통해 이미 존재하는지를 확인합니다.
+        if (smoke.getId() != null) {
+            existingSmoke = smokeRepository.findById(smoke.getId())
+                    .orElse(null);
+        }
+
+        // 기존 장소인지 확인합니다.
+        Smoke smokeToSave;
+        if (existingSmoke != null) {
+            // 이미 존재하는 장소를 사용합니다.
+            smokeToSave = existingSmoke;
+        } else {
+            // 새로운 장소 정보를 사용합니다.
+            smokeToSave = smoke;
+        }
+
+        // UserSmoke 객체를 생성하고 사용자의 목록에 추가합니다.
+        UserSmoke userSmoke = new UserSmoke(userId, smokeToSave);
+        userSmokes.add(userSmoke);
+
+        return ApiResponse.ok("흡연구역이 성공적으로 저장되었습니다.", userSmoke);
     }
+
 
     /**
      * 사용자가 내 장소로 저장한 흡연구역을 삭제합니다.
      *
      * @param userId 사용자의 ID.
      * @param smokeId 삭제할 흡연구역의 ID.
+     * @return 삭제 결과를 포함하는 ApiResponse.
      */
-    public void deleteUserSmoke(Long userId, Long smokeId) {
-        UserSmoke userSmoke = userSmokeRepository.findByUserId(userId).stream()
-                .filter(us -> us.getSmoke().getId().equals(smokeId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("UserSmoke not found with userId: " + userId + " and smokeId: " + smokeId));
-        userSmokeRepository.delete(userSmoke);
+    public ApiResponse<Void> deleteUserSmoke(Long userId, Long smokeId) {
+        List<UserSmoke> userSmokes = userSmokeMap.get(userId);
+
+        if (userSmokes != null) {
+            boolean removed = userSmokes.removeIf(us -> us.getSmoke().getId().equals(smokeId));
+
+            if (removed) {
+                return ApiResponse.ok("흡연구역이 성공적으로 삭제되었습니다.");
+            }
+        }
+
+        return ApiResponse.of(HttpStatus.NOT_FOUND, "흡연구역을 찾을 수 없습니다.\n사용자 ID: " + userId + "\n흡연구역 ID: " + smokeId, null);
     }
 
     /**
@@ -71,21 +99,25 @@ public class UserSmokeService {
      *
      * @param userId 사용자의 ID.
      * @param smokeId 업데이트할 흡연구역의 ID.
-     * @param updatedSmoke 업데이트할 화장실의 새로운 정보.
-     * @return 업데이트된 UserSmoke 객체.
+     * @param updatedSmoke 업데이트할 흡연구역의 새로운 정보.
+     * @return 업데이트된 UserSmoke 객체를 포함하는 ApiResponse.
      */
-    public UserSmoke updateUserSmoke(Long userId, Long smokeId, Smoke updatedSmoke) {
-        UserSmoke userSmoke = userSmokeRepository.findByUserId(userId).stream()
-                .filter(us -> us.getSmoke().getId().equals(smokeId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("UserSmoke not found with userId: " + userId + " and smokeId: " + smokeId));
+    public ApiResponse<UserSmoke> updateUserSmoke(Long userId, Long smokeId, Smoke updatedSmoke) {
+        List<UserSmoke> userSmokes = userSmokeMap.get(userId);
 
-        Smoke smoke = userSmoke.getSmoke();
-        smoke.setDistrict(updatedSmoke.getDistrict());
-        smoke.setType(updatedSmoke.getType());
-        smoke.setLocation(updatedSmoke.getLocation());
+        if (userSmokes != null) {
+            for (UserSmoke userSmoke : userSmokes) {
+                if (userSmoke.getSmoke().getId().equals(smokeId)) {
+                    Smoke smoke = userSmoke.getSmoke();
+                    smoke.setDistrict(updatedSmoke.getDistrict());
+                    smoke.setType(updatedSmoke.getType());
+                    smoke.setLocation(updatedSmoke.getLocation());
 
-        smokeRepository.save(smoke);
-        return userSmoke;
+                    return ApiResponse.ok("흡연구역 정보가 성공적으로 업데이트되었습니다.", userSmoke);
+                }
+            }
+        }
+
+        return ApiResponse.of(HttpStatus.NOT_FOUND, "사용자가 저장한 흡연구역을 찾을 수 없습니다.\n사용자 ID: " + userId + "\n흡연구역 ID: " + smokeId, null);
     }
 }

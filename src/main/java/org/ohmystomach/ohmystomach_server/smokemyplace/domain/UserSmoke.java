@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.apache.catalina.User;
 import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
+import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 
 @Entity
 @Getter
@@ -25,5 +26,10 @@ public class UserSmoke {
 
     @ManyToOne
     private Smoke smoke;
+
+    public UserSmoke(Long userId, Smoke smoke) {
+        this.userId = userId;
+        this.smoke = smoke;
+    }
 }
 
