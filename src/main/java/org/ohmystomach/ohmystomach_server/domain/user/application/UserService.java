@@ -3,10 +3,13 @@ package org.ohmystomach.ohmystomach_server.domain.user.application;
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.user.dao.UserRepository;
 import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
+import org.ohmystomach.ohmystomach_server.domain.user.dto.request.UpdateUserRequestServiceDto;
+import org.ohmystomach.ohmystomach_server.global.adapter.S3Adapter;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final S3Adapter s3Adapter;
 
 
     public ApiResponse<User> retrieveOrCreateUser(Map<String, Object> userInfo) {
@@ -69,4 +73,39 @@ public class UserService {
         return ApiResponse.ok("닉네임 중복확인 결과를 성공적으로 조회했습니다.", users.isEmpty());
     }
 
+    public ApiResponse<User> updateUser(UpdateUserRequestServiceDto dto, MultipartFile file) {
+        Optional<User> optionalUser = userRepository.findById(dto.uuid());
+        if(optionalUser.isEmpty()) {
+            return ApiResponse.withError(ErrorCode.INVALID_USER_ID);
+        }
+        User user = optionalUser.get();
+        String profileImageFileName = null;
+        String profileImageUrl = null;
+        if(!file.isEmpty()) {
+            // 기존 프로필 이미지 삭제
+            // 카카오 프로필 이미지인지 확인(이미지 파일 이름이 없으면 카카오 이미지 -> 바로 이미지 등록해도 됨)
+            String fileName = user.getProfileImageFileName();
+            if(fileName != null && !fileName.isEmpty()) {
+                System.out.println("파일 이름 있음.");
+                ApiResponse<String> deleteFileResponse = s3Adapter.deleteFile(fileName);
+                if(deleteFileResponse.getStatus().is5xxServerError()) {
+                    return ApiResponse.withError(ErrorCode.ERROR_S3_DELETE_OBJECT);
+                }
+            }
+            else {
+                System.out.println("파일 이름 없음.");
+            }
+            // 새로운 프로필 이미지 등록
+            ApiResponse<String> uploadFileResponse = s3Adapter.uploadImage(file);
+            if(uploadFileResponse.getStatus().is5xxServerError()) {
+                return ApiResponse.withError(ErrorCode.ERROR_S3_UPDATE_OBJECT);
+            }
+            profileImageFileName = file.getOriginalFilename();
+            profileImageUrl = uploadFileResponse.getData();
+
+        }
+        user.update(dto, profileImageFileName, profileImageUrl);
+        User savedUser = userRepository.save(user);
+        return ApiResponse.ok("사용자 정보를 성공적으로 수정했습니다.", savedUser);
+    }
 }
