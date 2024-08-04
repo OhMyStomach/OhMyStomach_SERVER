@@ -8,6 +8,7 @@ import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -62,4 +63,10 @@ public class UserService {
         User savedUser = optionalUser.get();
         return ApiResponse.ok("사용자 정보를 성공적으로 조회했습니다.", savedUser);
     }
+
+    public ApiResponse<Boolean> validateUserNickname(String nickname) {
+        List<User> users = userRepository.findByNickname(nickname);
+        return ApiResponse.ok("닉네임 중복확인 결과를 성공적으로 조회했습니다.", users.isEmpty());
+    }
+
 }
