@@ -79,21 +79,17 @@ public class UserService {
             return ApiResponse.withError(ErrorCode.INVALID_USER_ID);
         }
         User user = optionalUser.get();
-        String profileImageFileName = null;
-        String profileImageUrl = null;
+        String profileImageFileName = user.getProfileImageFileName();
+        String profileImageUrl = user.getProfileImageUrl();
         if(!file.isEmpty()) {
             // 기존 프로필 이미지 삭제
             // 카카오 프로필 이미지인지 확인(이미지 파일 이름이 없으면 카카오 이미지 -> 바로 이미지 등록해도 됨)
             String fileName = user.getProfileImageFileName();
             if(fileName != null && !fileName.isEmpty()) {
-                System.out.println("파일 이름 있음.");
                 ApiResponse<String> deleteFileResponse = s3Adapter.deleteFile(fileName);
                 if(deleteFileResponse.getStatus().is5xxServerError()) {
                     return ApiResponse.withError(ErrorCode.ERROR_S3_DELETE_OBJECT);
                 }
-            }
-            else {
-                System.out.println("파일 이름 없음.");
             }
             // 새로운 프로필 이미지 등록
             ApiResponse<String> uploadFileResponse = s3Adapter.uploadImage(file);
