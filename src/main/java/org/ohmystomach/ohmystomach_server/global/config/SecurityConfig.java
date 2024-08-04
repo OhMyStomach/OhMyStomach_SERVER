@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
 //                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).authenticated()
                         .requestMatchers(WHITE_LIST).permitAll()
-//                        .anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
 
                 // oauth2 설정
