@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.apache.catalina.User;
 import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request.UpdateUserSmokeServiceRequestDto;
 import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 
 @Entity
@@ -21,15 +22,24 @@ public class UserSmoke {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user;
+//    @ManyToOne
+//    private User user;
 
-    @ManyToOne
-    private Smoke smoke;
+    private String name;
+    private String location;
+    private String detailLocation;
+    private String memo;
 
     public UserSmoke(Long userId, Smoke smoke) {
-        this.userId = userId;
-        this.smoke = smoke;
+//        this.userId = userId;
+//        this.smoke = smoke;
+    }
+
+    public void update(UpdateUserSmokeServiceRequestDto dto) {
+        this.name = dto.name();
+        this.location = dto.location();
+        this.detailLocation = dto.detailLocation();
+        this.memo = dto.memo();
     }
 }
 

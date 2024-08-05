@@ -5,19 +5,20 @@ import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dao.UserToiletRep
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.CreateUserToiletServiceRequestDto;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletServiceRequestDto;
-import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
+import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 사용자가 저장한 화장실 관련 비즈니스 로직을 처리하는 서비스 클래스.
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserToiletService {
     private final UserToiletRepository userToiletRepository;
 
@@ -59,7 +60,7 @@ public class UserToiletService {
      * @param toiletId 삭제할 화장실의 ID.
      * @return ApiResponse 삭제 결과.
      */
-    public ApiResponse<Void> deleteUserToilet(String uuid, Long toiletId) {
+    public ApiResponse<String> deleteUserToilet(String uuid, Long toiletId) {
         if(!userToiletRepository.existsByIdAndUserId(toiletId, uuid)){
             return ApiResponse.withError(ErrorCode.INVALID_USER_TOILET_ID);
         }

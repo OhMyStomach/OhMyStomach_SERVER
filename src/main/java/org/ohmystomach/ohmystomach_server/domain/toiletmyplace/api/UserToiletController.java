@@ -2,13 +2,12 @@ package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.api;
 
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.oauth.application.JWTService;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.application.UserToiletService;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.CreateUserToiletRequestDto;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletRequestDto;
-import org.springframework.web.bind.annotation.*;
-import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
-import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
-import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.application.UserToiletService;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,24 +48,24 @@ public class UserToiletController {
     /**
      * 사용자가 내 장소로 저장한 화장실을 삭제합니다.
      *
-     * @param userId 사용자의 ID.
+     * @param token 사용자의 ID.
      * @param toiletId 삭제할 화장실의 ID.
      * @return 삭제 결과 메시지를 포함하는 ApiResponse.
      */
     @DeleteMapping("/{toiletId}")
-    public ApiResponse<Void> deleteUserToilet(@RequestHeader("Authorization") String token, @PathVariable Long toiletId) {
+    public ApiResponse<String> deleteUserToilet(@RequestHeader("Authorization") String token, @PathVariable Long toiletId) {
         return userToiletService.deleteUserToilet(jwtService.decodeToken(token), toiletId);
     }
 
     /**
      * 사용자가 내 장소로 저장한 화장실의 정보를 업데이트합니다.
      *
-     * @param userId 사용자의 ID.
-     * @param toiletId 업데이트할 화장실의 ID.
-     * @param updatedToilet 업데이트할 화장실의 새로운 정보.
+     * @param dto 사용자의 ID.
+     * @param dto 업데이트할 화장실의 ID.
+     * @param dto 업데이트할 화장실의 새로운 정보.
      * @return 업데이트된 UserToilet 객체를 포함하는 ApiResponse.
      */
-    @PutMapping("/{userId}/{toiletId}")
+    @PutMapping("edit")
     public ApiResponse<UserToilet> updateUserToilet(@RequestBody UpdateUserToiletRequestDto dto) {
         return userToiletService.updateUserToilet(dto.toServiceDto(jwtService.decodeToken(dto.token())));
     }

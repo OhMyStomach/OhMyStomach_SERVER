@@ -1,7 +1,12 @@
 package org.ohmystomach.ohmystomach_server.domain.smokemyplace.api;
 
 import lombok.RequiredArgsConstructor;
+import org.ohmystomach.ohmystomach_server.domain.oauth.application.JWTService;
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.application.UserSmokeService;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request.CreateUserSmokeRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request.UpdateUserSmokeRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.CreateUserToiletRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletRequestDto;
 import org.springframework.web.bind.annotation.*;
 import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
@@ -18,6 +23,7 @@ import java.util.List;
 public class UserSmokeController {
     // UserSmokeService 의존성 주입, 사용자가 저장한 흡연구역 관련 비즈니스 로직 처리
     private final UserSmokeService userSmokeService;
+    private final JWTService jwtService;
 
     /**
      * 사용자가 내 장소로 저장한 흡연구역 목록을 조회합니다.
@@ -25,9 +31,9 @@ public class UserSmokeController {
      * @param userId 사용자의 ID.
      * @return 사용자가 저장한 흡연구역 목록을 포함하는 ApiResponse.
      */
-    @GetMapping("/{userId}")
-    public ApiResponse<List<Smoke>> getUserSavedSmokes(@PathVariable Long userId) {
-        return userSmokeService.getUserSavedSmokes(userId);
+    @GetMapping("/all")
+    public ApiResponse<List<UserSmoke>> retrieveUserSavedSmokes(@RequestHeader("Authorization") String token) {
+        return userSmokeService.retrieveUserSavedSmokes(jwtService.decodeToken(token));
     }
 
     /**
@@ -37,9 +43,9 @@ public class UserSmokeController {
      * @param smoke 요청 본문으로 전달된 흡연구역 객체.
      * @return 저장된 UserSmoke 객체를 포함하는 ApiResponse.
      */
-    @PostMapping("/{userId}")
-    public ApiResponse<UserSmoke> saveUserSmoke(@PathVariable Long userId, @RequestBody Smoke smoke) {
-        return userSmokeService.saveUserSmoke(userId, smoke);
+    @PostMapping("/save")
+    public ApiResponse<UserSmoke> createUserSmoke(@RequestBody CreateUserSmokeRequestDto dto) {
+        return userSmokeService.createUserSmoke(dto.toServiceDto(jwtService.decodeToken(dto.token())));
     }
 
     /**
@@ -49,9 +55,9 @@ public class UserSmokeController {
      * @param smokeId 삭제할 Smoke의 ID.
      * @return 삭제 결과 메시지를 포함하는 ApiResponse.
      */
-    @DeleteMapping("/{userId}/{smokeId}")
-    public ApiResponse<Void> deleteUserSmoke(@PathVariable Long userId, @PathVariable Long smokeId) {
-        return userSmokeService.deleteUserSmoke(userId, smokeId);
+    @DeleteMapping("/{smokeId}")
+    public ApiResponse<String> deleteUserSmoke(@RequestHeader("Authorization") String token, @PathVariable Long smokeId) {
+        return userSmokeService.deleteUserSmoke(jwtService.decodeToken(token), smokeId);
     }
 
     /**
@@ -62,8 +68,8 @@ public class UserSmokeController {
      * @param updatedSmoke 업데이트할 흡연구역의 새로운 정보.
      * @return 업데이트된 UserSmoke 객체를 포함하는 ApiResponse.
      */
-    @PutMapping("/{userId}/{smokeId}")
-    public ApiResponse<UserSmoke> updateUserSmoke(@PathVariable Long userId, @PathVariable Long smokeId, @RequestBody Smoke updatedSmoke) {
-        return userSmokeService.updateUserSmoke(userId, smokeId, updatedSmoke);
+    @PutMapping("edit")
+    public ApiResponse<UserSmoke> updateUserSmoke(@RequestBody UpdateUserSmokeRequestDto dto) {
+        return userSmokeService.updateUserSmoke(dto.toServiceDto(jwtService.decodeToken(dto.token())));
     }
 }

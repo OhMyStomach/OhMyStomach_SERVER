@@ -21,8 +21,8 @@ public class UserToilet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @ManyToOne
-    private User user;
+//    @ManyToOne
+//    private User user;
 
 //    @ManyToOne
 //    private Toilet toilet;
