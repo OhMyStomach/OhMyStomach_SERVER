@@ -5,6 +5,8 @@ import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dao.UserToiletRep
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.CreateUserToiletServiceRequestDto;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.user.application.UserService;
+import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.Optional;
 @Transactional
 public class UserToiletService {
     private final UserToiletRepository userToiletRepository;
+
+    private final UserService userService;
 
     // In-memory storage for user-specific toilets
 //    private final Map<String, List<UserToilet>> userToiletMap = new HashMap<>();
@@ -48,7 +52,10 @@ public class UserToiletService {
      * @return 저장된 UserToilet 객체를 포함하는 ApiResponse.
      */
     public ApiResponse<UserToilet> createUserToilet(CreateUserToiletServiceRequestDto dto) {
-        UserToilet userToilet = dto.toEntity();
+
+        User user = userService.retrieveUser(dto.uuid()).getData();
+
+        UserToilet userToilet = dto.toEntity(user);
         UserToilet savedToilet = userToiletRepository.save(userToilet);
         return ApiResponse.ok("나의 화장실을 성공적으로 등록했습니다.", savedToilet);
     }
