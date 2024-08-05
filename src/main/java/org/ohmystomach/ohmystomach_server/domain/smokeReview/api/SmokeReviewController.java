@@ -3,6 +3,7 @@ package org.ohmystomach.ohmystomach_server.domain.smokeReview.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.ohmystomach.ohmystomach_server.domain.oauth.application.JWTService;
 import org.ohmystomach.ohmystomach_server.domain.smokeReview.domain.SmokeReview;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.domain.smokeReview.dto.request.CreateSmokeReviewRequestDto;
@@ -20,6 +21,7 @@ public class SmokeReviewController {
 
   // SmokeReviewService 의존성 주입, 리뷰 관련 비즈니스 로직 처리
   private final SmokeReviewService reviewService;
+  private final JWTService jwtService;
   /**
    * 특정 흡연구역의 리뷰 목록을 조회합니다.
    *
@@ -42,7 +44,7 @@ public class SmokeReviewController {
    * @param dto 등록할 리뷰 객체.
    * @return 등록된 리뷰 객체를 포함하는 ApiResponse.
    */
-  @Operation(summary = "흡역구역 후기 생성(등록) API", description = "  /**\n" +
+  @Operation(summary = "흡연구역 후기 생성(등록) API", description = "  /**\n" +
           "   * 특정 흡연구역의 리뷰 목록을 조회합니다.\n" +
           "   *\n" +
           "   * @param toiletId 조회할 화장실의 ID.\n" +
@@ -51,8 +53,7 @@ public class SmokeReviewController {
           "   */")
   @PostMapping
   public ApiResponse<SmokeReview> addReview(@RequestBody CreateSmokeReviewRequestDto dto) {
-
-    return reviewService.addReview(dto.toServiceRequest());
+    return reviewService.addReview(dto.toServiceRequest(jwtService.decodeToken(dto.token())));
   }
 
 
@@ -64,7 +65,7 @@ public class SmokeReviewController {
    * @param dto 수정할 리뷰 정보를 포함한 객체.
    * @return 수정된 리뷰 객체를 포함하는 ApiResponse.
    */
-  @Operation(summary = "흡역구역 후기 수정 API")
+  @Operation(summary = "흡연구역 후기 수정 API")
   @PutMapping("/{id}")
   public ApiResponse<SmokeReview> updateReview(@PathVariable Long id, @RequestBody UpdateSmokeReviewRequestDto dto) {
     return reviewService.updateReview(id, dto.toServiceRequest());
@@ -78,9 +79,10 @@ public class SmokeReviewController {
    * @param id 삭제할 리뷰의 ID.
    * @return 삭제 성공 메시지를 포함하는 ApiResponse.
    */
-  @Operation(summary = "흡역구역 후기 삭제 API")
+  @Operation(summary = "흡연구역 후기 삭제 API")
   @DeleteMapping("/{id}")
-  public ApiResponse<String> deleteReview(@PathVariable Long id) {
-    return reviewService.deleteReview(id);
+  public ApiResponse<String> deleteReview(@RequestHeader("Authorization") String token,
+                                          @PathVariable Long id) {
+    return reviewService.deleteReview(jwtService.decodeToken(token), id);
   }
 }

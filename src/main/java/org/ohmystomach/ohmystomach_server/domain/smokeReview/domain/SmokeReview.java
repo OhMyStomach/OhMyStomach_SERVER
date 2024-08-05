@@ -20,7 +20,6 @@ public class SmokeReview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String username;  // 작성자 이름
   private String content;  // 후기 내용
   private int rating;  // 별점 (1~5)
 
@@ -36,15 +35,14 @@ public class SmokeReview {
   private User user;
 
   @Builder
-  public SmokeReview(String username, String content, int rating, Smoke smoke) {
-    this.username = username;
+  public SmokeReview(User user, String content, int rating, Smoke smoke) {
+    this.user = user;
     this.content = content;
     this.rating = rating;
     this.smoke = smoke;
   }
 
   public void update(UpdateSmokeReviewServiceRequestDto dto) {
-    this.username = dto.username();
     this.content = dto.content();
     this.rating = dto.rating();
   }

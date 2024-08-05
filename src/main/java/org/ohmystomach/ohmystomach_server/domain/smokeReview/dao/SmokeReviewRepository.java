@@ -46,4 +46,6 @@ public interface SmokeReviewRepository extends JpaRepository<SmokeReview, Long> 
    * @return 별점 낮은 순으로 정렬된 리뷰 리스트.
    */
   List<SmokeReview> findBySmokeIdOrderByRatingAsc(Long smokeId);
+
+  boolean existsByIdAndUserId(Long id, String userId);
 }

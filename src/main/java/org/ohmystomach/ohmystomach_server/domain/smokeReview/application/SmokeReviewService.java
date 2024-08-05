@@ -6,6 +6,7 @@ import org.ohmystomach.ohmystomach_server.domain.smokeReview.dao.SmokeReviewRepo
 import org.ohmystomach.ohmystomach_server.domain.smokeReview.domain.SmokeReview;
 import org.ohmystomach.ohmystomach_server.domain.smokeReview.dto.request.CreateSmokeReviewServiceRequestDto;
 import org.ohmystomach.ohmystomach_server.domain.smokeReview.dto.request.UpdateSmokeReviewServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.user.application.UserService;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class SmokeReviewService {
   // ReviewRepository 의존성 주입, 리뷰 데이터베이스 작업 처리
   private final SmokeReviewRepository reviewRepository;
   private final SmokeService smokeService;
+  private final UserService userService;
 
   /**
    * 특정 흡연구역의 리뷰 목록을 조회합니다.
@@ -58,7 +60,7 @@ public class SmokeReviewService {
    * @return 저장된 리뷰 객체.
    */
   public ApiResponse<SmokeReview> addReview(CreateSmokeReviewServiceRequestDto dto) {
-    SmokeReview savedReview = reviewRepository.save(dto.toEntity(smokeService.retrieveSmokeById(dto.smokeId()).getData()));
+    SmokeReview savedReview = reviewRepository.save(dto.toEntity(userService.retrieveUser(dto.uuid()).getData(), smokeService.retrieveSmokeById(dto.smokeId()).getData()));
     return ApiResponse.ok("후기 등록을 완료했습니다.", savedReview);
   }
 
@@ -94,8 +96,9 @@ public class SmokeReviewService {
    *
    * @param id 삭제할 리뷰의 ID.
    */
-  public ApiResponse<String> deleteReview(Long id) {
-    if(!reviewRepository.existsById(id)){
+  public ApiResponse<String> deleteReview(String uuid, Long id) {
+    if(!reviewRepository.existsByIdAndUserId(id, uuid)) {
+//    if(!reviewRepository.existsById(id)){
       return ApiResponse.withError(ErrorCode.INVALID_REVIEW_ID);
     }
     reviewRepository.deleteById(id);
