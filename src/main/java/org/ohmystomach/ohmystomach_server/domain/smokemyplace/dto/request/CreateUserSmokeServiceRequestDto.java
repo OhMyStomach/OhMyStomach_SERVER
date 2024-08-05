@@ -1,7 +1,7 @@
 package org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request;
 
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
-import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
+import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
 
 public record CreateUserSmokeServiceRequestDto(
     String uuid,
@@ -10,9 +10,9 @@ public record CreateUserSmokeServiceRequestDto(
     String detailLocation,
     String memo
 ) {
-    public UserSmoke toEntity() {
+    public UserSmoke toEntity(User user) {
         return UserSmoke.builder()
-                //uuid
+                .user(user)
                 .name(name)
                 .location(location)
                 .detailLocation(detailLocation)

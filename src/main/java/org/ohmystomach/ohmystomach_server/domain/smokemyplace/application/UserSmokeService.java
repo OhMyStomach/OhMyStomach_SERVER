@@ -2,28 +2,29 @@ package org.ohmystomach.ohmystomach_server.domain.smokemyplace.application;
 
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dao.UserSmokeRepository;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request.CreateUserSmokeServiceRequestDto;
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request.UpdateUserSmokeServiceRequestDto;
-import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
-import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
+import org.ohmystomach.ohmystomach_server.domain.user.application.UserService;
+import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
-import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
-import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
-import org.ohmystomach.ohmystomach_server.domain.smoke.dao.SmokeRepository;
+import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 사용자가 저장한 흡연구역 관련 비즈니스 로직을 처리하는 서비스 클래스.
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserSmokeService {
     private final UserSmokeRepository userSmokeRepository;
+
+    private final UserService userService;
 
     // In-memory storage for user-specific smoking areas
 //    private final Map<Long, List<UserSmoke>> userSmokeMap = new HashMap<>();
@@ -31,7 +32,7 @@ public class UserSmokeService {
     /**
      * 사용자가 저장한 흡연구역의 목록을 조회합니다.
      *
-     * @param userId 조회할 사용자의 ID.
+     * @param uuid 조회할 사용자의 ID.
      * @return 조회된 사용자가 저장한 흡연구역 목록을 포함하는 ApiResponse.
      */
     public ApiResponse<List<UserSmoke>> retrieveUserSavedSmokes(String uuid) {
@@ -47,12 +48,13 @@ public class UserSmokeService {
     /**
      * 새로운 흡연구역을 사용자의 내 장소로 저장합니다.
      *
-     * @param userId 조회할 사용자의 ID.
-     * @param smoke  저장할 흡연구역 객체.
+     * @param dto 조회할 사용자의 ID.
+     * @param dto  저장할 흡연구역 객체.
      * @return 저장된 UserSmoke 객체를 포함하는 ApiResponse.
      */
     public ApiResponse<UserSmoke> createUserSmoke(CreateUserSmokeServiceRequestDto dto) {
-        UserSmoke userSmoke = dto.toEntity();
+        User user = userService.retrieveUser(dto.uuid()).getData();
+        UserSmoke userSmoke = dto.toEntity(user);
         UserSmoke savedSmoke = userSmokeRepository.save(userSmoke);
         return ApiResponse.ok("나의 흡연구역을 성공적으로 등록했습니다.", savedSmoke);
         // 사용자에 대한 흡연구역 리스트를 가져오거나 새로 생성합니다.
@@ -86,7 +88,7 @@ public class UserSmokeService {
     /**
      * 사용자가 내 장소로 저장한 흡연구역을 삭제합니다.
      *
-     * @param userId 사용자의 ID.
+     * @param uuid 사용자의 ID.
      * @param smokeId 삭제할 흡연구역의 ID.
      * @return 삭제 결과를 포함하는 ApiResponse.
      */
@@ -113,9 +115,9 @@ public class UserSmokeService {
     /**
      * 사용자가 내 장소로 저장한 흡연구역의 정보를 업데이트합니다.
      *
-     * @param userId 사용자의 ID.
-     * @param smokeId 업데이트할 흡연구역의 ID.
-     * @param updatedSmoke 업데이트할 흡연구역의 새로운 정보.
+     * @param dto 사용자의 ID.
+     * @param dto 업데이트할 흡연구역의 ID.
+     * @param dto 업데이트할 흡연구역의 새로운 정보.
      * @return 업데이트된 UserSmoke 객체를 포함하는 ApiResponse.
      */
     public ApiResponse<UserSmoke> updateUserSmoke(UpdateUserSmokeServiceRequestDto dto) {
