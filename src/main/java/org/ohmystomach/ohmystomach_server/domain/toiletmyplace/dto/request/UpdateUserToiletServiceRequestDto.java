@@ -2,8 +2,9 @@ package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request;
 
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
 
-public record CreateUserToiletServiceRequestDto(
+public record UpdateUserToiletServiceRequestDto(
     String uuid,
+    Long toiletId,
     String name,
     String location,
     String detailLocation,
@@ -12,9 +13,4 @@ public record CreateUserToiletServiceRequestDto(
     String toiletPaper,
     String memo
 ) {
-    public UserToilet toEntity() {
-        return UserToilet.builder()
-                .
-                .build();
-    }
 }

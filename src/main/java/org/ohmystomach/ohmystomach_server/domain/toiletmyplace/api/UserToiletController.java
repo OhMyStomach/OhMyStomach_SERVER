@@ -3,6 +3,7 @@ package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.api;
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.oauth.application.JWTService;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.CreateUserToiletRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletRequestDto;
 import org.springframework.web.bind.annotation.*;
 import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
@@ -29,15 +30,15 @@ public class UserToiletController {
      * @return 사용자가 저장한 화장실 목록을 포함하는 ApiResponse.
      */
     @GetMapping("/all")
-    public ApiResponse<List<UserToilet>> retrieveUserSavedToilets(@RequestParam String token) {
+    public ApiResponse<List<UserToilet>> retrieveUserSavedToilets(@RequestHeader("Authorization") String token) {
         return userToiletService.retrieveUserSavedToilets(jwtService.decodeToken(token));
     }
 
     /**
      * 새로운 화장실을 사용자의 내 장소로 저장합니다.
      *
-     * @param userId 사용자의 ID.
-     * @param toilet 요청 본문으로 전달된 화장실 객체.
+     * @param dto 사용자의 ID.
+     * @param dto 요청 본문으로 전달된 화장실 객체.
      * @return 저장된 UserToilet 객체를 포함하는 ApiResponse.
      */
     @PostMapping("/save")
@@ -53,8 +54,8 @@ public class UserToiletController {
      * @return 삭제 결과 메시지를 포함하는 ApiResponse.
      */
     @DeleteMapping("/{toiletId}")
-    public ApiResponse<Void> deleteUserToilet(@PathVariable Long userId, @PathVariable Long toiletId) {
-        return userToiletService.deleteUserToilet(userId, toiletId);
+    public ApiResponse<Void> deleteUserToilet(@RequestHeader("Authorization") String token, @PathVariable Long toiletId) {
+        return userToiletService.deleteUserToilet(jwtService.decodeToken(token), toiletId);
     }
 
     /**
@@ -66,7 +67,7 @@ public class UserToiletController {
      * @return 업데이트된 UserToilet 객체를 포함하는 ApiResponse.
      */
     @PutMapping("/{userId}/{toiletId}")
-    public ApiResponse<UserToilet> updateUserToilet(@PathVariable Long userId, @PathVariable Long toiletId, @RequestBody Toilet updatedToilet) {
-        return userToiletService.updateUserToilet(userId, toiletId, updatedToilet);
+    public ApiResponse<UserToilet> updateUserToilet(@RequestBody UpdateUserToiletRequestDto dto) {
+        return userToiletService.updateUserToilet(dto.toServiceDto(jwtService.decodeToken(dto.token())));
     }
 }

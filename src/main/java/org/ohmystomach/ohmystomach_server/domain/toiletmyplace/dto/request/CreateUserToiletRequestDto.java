@@ -10,7 +10,7 @@ public record CreateUserToiletRequestDto (
     String toiletPaper,
     String memo
 ) {
-    public CreateUserToiletServiceRequestDto toServiceDto(String s) {
-        return new CreateUserToiletServiceRequestDto(token, name, location, detailLocation, password, time, toiletPaper, memo);
+    public CreateUserToiletServiceRequestDto toServiceDto(String uuid) {
+        return new CreateUserToiletServiceRequestDto(uuid, name, location, detailLocation, password, time, toiletPaper, memo);
     }
 }
