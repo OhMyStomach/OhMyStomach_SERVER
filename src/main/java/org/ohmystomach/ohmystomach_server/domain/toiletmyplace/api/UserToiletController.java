@@ -73,7 +73,7 @@ public class UserToiletController {
      * @return 업데이트된 UserToilet 객체를 포함하는 ApiResponse.
      */
     @Operation(summary = "내 화장실 정보 수정 api", description = "사용자가 내 장소로 저장한 화장실의 정보를 업데이트합니다.")
-    @PutMapping("edit")
+    @PutMapping("/edit")
     public ApiResponse<UserToilet> updateUserToilet(@RequestBody UpdateUserToiletRequestDto dto) {
         return userToiletService.updateUserToilet(dto.toServiceDto(jwtService.decodeToken(dto.token())));
     }

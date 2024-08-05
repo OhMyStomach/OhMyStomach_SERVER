@@ -73,7 +73,7 @@ public class UserSmokeController {
      * @return 업데이트된 UserSmoke 객체를 포함하는 ApiResponse.
      */
     @Operation(summary = "내 흡연구역 정보 수정 api", description = "사용자가 내 장소로 저장한 흡연구역의 정보를 업데이트합니다.")
-    @PutMapping("edit")
+    @PutMapping("/edit")
     public ApiResponse<UserSmoke> updateUserSmoke(@RequestBody UpdateUserSmokeRequestDto dto) {
         return userSmokeService.updateUserSmoke(dto.toServiceDto(jwtService.decodeToken(dto.token())));
     }
