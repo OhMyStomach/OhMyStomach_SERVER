@@ -28,7 +28,7 @@ public class UserSmokeController {
     /**
      * 사용자가 내 장소로 저장한 흡연구역 목록을 조회합니다.
      *
-     * @param userId 사용자의 ID.
+     * @param token 사용자의 ID.
      * @return 사용자가 저장한 흡연구역 목록을 포함하는 ApiResponse.
      */
     @Operation(summary = "내 흡연구역 정보 조회 api", description = "사용자가 내 장소로 저장한 흡연구역 목록을 조회합니다.")
@@ -40,8 +40,8 @@ public class UserSmokeController {
     /**
      * 새로운 흡연구역을 사용자의 내 장소로 저장합니다.
      *
-     * @param userId 사용자의 ID.
-     * @param smoke 요청 본문으로 전달된 흡연구역 객체.
+     * @param dto 사용자의 ID.
+     * @param dto 요청 본문으로 전달된 흡연구역 객체.
      * @return 저장된 UserSmoke 객체를 포함하는 ApiResponse.
      */
     @Operation(summary = "내 흡연구역 정보 생성 api", description = "새로운 흡연구역을 사용자의 내 장소로 저장합니다.")
@@ -53,7 +53,7 @@ public class UserSmokeController {
     /**
      * 사용자가 내 장소로 저장한 흡연구역을 삭제합니다.
      *
-     * @param userId 사용자의 ID.
+     * @param token 사용자의 ID.
      * @param smokeId 삭제할 Smoke의 ID.
      * @return 삭제 결과 메시지를 포함하는 ApiResponse.
      */
@@ -67,9 +67,9 @@ public class UserSmokeController {
     /**
      * 사용자가 내 장소로 저장한 흡연구역의 정보를 업데이트합니다.
      *
-     * @param userId 사용자의 ID.
-     * @param smokeId 업데이트할 흡연구역의 ID.
-     * @param updatedSmoke 업데이트할 흡연구역의 새로운 정보.
+     * @param dto 사용자의 ID.
+     * @param dto 업데이트할 흡연구역의 ID.
+     * @param dto 업데이트할 흡연구역의 새로운 정보.
      * @return 업데이트된 UserSmoke 객체를 포함하는 ApiResponse.
      */
     @Operation(summary = "내 흡연구역 정보 수정 api", description = "사용자가 내 장소로 저장한 흡연구역의 정보를 업데이트합니다.")
