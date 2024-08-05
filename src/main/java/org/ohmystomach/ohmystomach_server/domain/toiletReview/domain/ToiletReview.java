@@ -20,7 +20,6 @@ public class ToiletReview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String username;  // 작성자 이름
   private String content;  // 후기 내용
   private int rating;  // 별점 (1~5)
 
@@ -36,15 +35,14 @@ public class ToiletReview {
   private User user;
 
   @Builder
-  public ToiletReview(String username, String content, int rating, Toilet toilet) {
-    this.username = username;
+  public ToiletReview(User user, String content, int rating, Toilet toilet) {
+    this.user = user;
     this.content = content;
     this.rating = rating;
     this.toilet = toilet;
   }
 
   public void update(UpdateToiletReviewServiceRequestDto dto) {
-    this.username = dto.username();
     this.content = dto.content();
     this.rating = dto.rating();
   }

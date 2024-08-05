@@ -3,6 +3,7 @@ package org.ohmystomach.ohmystomach_server.domain.toiletReview.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.ohmystomach.ohmystomach_server.domain.oauth.application.JWTService;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.domain.toiletReview.application.ToiletReviewService;
 import org.ohmystomach.ohmystomach_server.domain.toiletReview.domain.ToiletReview;
@@ -20,6 +21,7 @@ public class ToiletReviewController {
 
   // ToiletReviewService 의존성 주입, 리뷰 관련 비즈니스 로직 처리
   private final ToiletReviewService reviewService;
+  private final JWTService jwtService;
   /**
    * 특정 화장실의 리뷰 목록을 조회합니다.
    *
@@ -51,8 +53,7 @@ public class ToiletReviewController {
           "   */")
   @PostMapping
   public ApiResponse<ToiletReview> addReview(@RequestBody CreateToiletReviewRequestDto dto) {
-
-    return reviewService.addReview(dto.toServiceRequest());
+    return reviewService.addReview(dto.toServiceRequest(jwtService.decodeToken(dto.token())));
   }
 
 
@@ -80,7 +81,8 @@ public class ToiletReviewController {
    */
   @Operation(summary = "화장실 후기 삭제 API")
   @DeleteMapping("/{id}")
-  public ApiResponse<String> deleteReview(@PathVariable Long id) {
-    return reviewService.deleteReview(id);
+  public ApiResponse<String> deleteReview(@RequestHeader("Authorization") String token,
+                                          @PathVariable Long id) {
+    return reviewService.deleteReview(jwtService.decodeToken(token), id);
   }
 }

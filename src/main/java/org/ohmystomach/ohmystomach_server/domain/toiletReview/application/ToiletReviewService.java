@@ -2,6 +2,7 @@ package org.ohmystomach.ohmystomach_server.domain.toiletReview.application;
 
 import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.toiletReview.dao.ToiletReviewRepository;
+import org.ohmystomach.ohmystomach_server.domain.user.application.UserService;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 import org.ohmystomach.ohmystomach_server.global.error.ErrorCode;
 import org.ohmystomach.ohmystomach_server.domain.toiletReview.domain.ToiletReview;
@@ -25,6 +26,7 @@ public class ToiletReviewService {
   // ReviewRepository 의존성 주입, 리뷰 데이터베이스 작업 처리
   private final ToiletReviewRepository reviewRepository;
   private final ToiletService toiletService;
+  private final UserService userService;
 
   /**
    * 특정 화장실의 리뷰 목록을 조회합니다.
@@ -58,7 +60,7 @@ public class ToiletReviewService {
    * @return 저장된 리뷰 객체.
    */
   public ApiResponse<ToiletReview> addReview(CreateToiletReviewServiceRequestDto dto) {
-    ToiletReview savedReview = reviewRepository.save(dto.toEntity(toiletService.retrieveToiletById(dto.toiletId()).getData()));
+    ToiletReview savedReview = reviewRepository.save(dto.toEntity(userService.retrieveUser(dto.uuid()).getData(), toiletService.retrieveToiletById(dto.toiletId()).getData()));
     return ApiResponse.ok("후기 등록을 완료했습니다.", savedReview);
   }
 
@@ -94,8 +96,8 @@ public class ToiletReviewService {
    *
    * @param id 삭제할 리뷰의 ID.
    */
-  public ApiResponse<String> deleteReview(Long id) {
-    if(!reviewRepository.existsById(id)){
+  public ApiResponse<String> deleteReview(String uuid, Long id) {
+    if(!reviewRepository.existsByIdAndUserId(id, uuid)){
       return ApiResponse.withError(ErrorCode.INVALID_REVIEW_ID);
     }
     reviewRepository.deleteById(id);
