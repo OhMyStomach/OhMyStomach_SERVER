@@ -1,10 +1,10 @@
-package org.ohmystomach.ohmystomach_server.smokemyplace.application;
+package org.ohmystomach.ohmystomach_server.domain.smokemyplace.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
-import org.ohmystomach.ohmystomach_server.smokemyplace.domain.UserSmoke;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
 import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
 import org.ohmystomach.ohmystomach_server.domain.smoke.dao.SmokeRepository;
 

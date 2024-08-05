@@ -1,8 +1,8 @@
-package org.ohmystomach.ohmystomach_server.smokemyplace.dao;
+package org.ohmystomach.ohmystomach_server.domain.smokemyplace.dao;
 
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.ohmystomach.ohmystomach_server.smokemyplace.domain.UserSmoke;
 
 import java.util.List;
 

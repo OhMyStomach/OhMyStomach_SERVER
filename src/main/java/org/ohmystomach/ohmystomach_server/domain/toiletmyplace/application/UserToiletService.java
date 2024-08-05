@@ -1,15 +1,14 @@
-package org.ohmystomach.ohmystomach_server.toiletmyplace.application;
+package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.application;
 
 import lombok.RequiredArgsConstructor;
-import org.ohmystomach.ohmystomach_server.domain.toilet.dao.ToiletRepository;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dao.UserToiletRepository;
+import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain.UserToilet;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
-import org.ohmystomach.ohmystomach_server.toiletmyplace.domain.UserToilet;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 사용자가 저장한 화장실 관련 비즈니스 로직을 처리하는 서비스 클래스.
@@ -17,23 +16,24 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserToiletService {
-    private final ToiletRepository toiletRepository;
+    private final UserToiletRepository userToiletRepository;
 
     // In-memory storage for user-specific toilets
-    private final Map<Long, List<UserToilet>> userToiletMap = new HashMap<>();
+//    private final Map<String, List<UserToilet>> userToiletMap = new HashMap<>();
 
     /**
      * 사용자가 저장한 화장실의 목록을 조회합니다.
      *
-     * @param userId 조회할 사용자의 ID.
+     * @param uuid 조회할 사용자의 ID.
      * @return 조회된 사용자가 저장한 화장실 목록을 포함하는 ApiResponse.
      */
-    public ApiResponse<List<Toilet>> getUserSavedToilets(Long userId) {
-        List<UserToilet> userToilets = userToiletMap.getOrDefault(userId, new ArrayList<>());
-        List<Toilet> toilets = userToilets.stream()
-                .map(UserToilet::getToilet)
-                .collect(Collectors.toList());
-        return ApiResponse.ok("화장실 목록을 성공적으로 조회했습니다.", toilets);
+    public ApiResponse<List<UserToilet>> retrieveUserSavedToilets(String uuid) {
+        List<UserToilet> userToilets = userToiletRepository.findByUserId(uuid);
+//        List<UserToilet> userToilets = userToiletMap.getOrDefault(uuid, new ArrayList<>());
+//        List<Toilet> toilets = userToilets.stream()
+//                .map(UserToilet::getToilet)
+//                .collect(Collectors.toList());
+        return ApiResponse.ok("나의 화장실 목록을 성공적으로 조회했습니다.", userToilets);
     }
 
     /**
@@ -43,24 +43,24 @@ public class UserToiletService {
      * @param toilet   저장할 화장실 객체.
      * @return 저장된 UserToilet 객체를 포함하는 ApiResponse.
      */
-    public ApiResponse<UserToilet> saveUserToilet(Long userId, Toilet toilet) {
-        List<UserToilet> userToilets = userToiletMap.computeIfAbsent(userId, k -> new ArrayList<>());
-
-        Toilet toiletToSave = null;
-
-        // Check if the toilet object has an ID and retrieve it from the database
-        if (toilet.getId() != null) {
-            toiletToSave = toiletRepository.findById(toilet.getId())
-                    .orElse(null);
-        }
-
-        if (toiletToSave == null) {
-            // If it's a new toilet area, use the provided object as is
-            toiletToSave = toilet;
-        }
-
-        UserToilet userToilet = new UserToilet(userId, toiletToSave);
-        userToilets.add(userToilet);
+    public ApiResponse<UserToilet> createUserToilet(Long userId, Toilet toilet) {
+//        List<UserToilet> userToilets = userToiletMap.computeIfAbsent(userId, k -> new ArrayList<>());
+//
+//        Toilet toiletToSave = null;
+//
+//        // Check if the toilet object has an ID and retrieve it from the database
+//        if (toilet.getId() != null) {
+//            toiletToSave = toiletRepository.findById(toilet.getId())
+//                    .orElse(null);
+//        }
+//
+//        if (toiletToSave == null) {
+//            // If it's a new toilet area, use the provided object as is
+//            toiletToSave = toilet;
+//        }
+//
+//        UserToilet userToilet = new UserToilet(userId, toiletToSave);
+//        userToilets.add(userToilet);
 
         return ApiResponse.ok("화장실이 성공적으로 저장되었습니다.", userToilet);
     }

@@ -1,10 +1,10 @@
-package org.ohmystomach.ohmystomach_server.smokemyplace.api;
+package org.ohmystomach.ohmystomach_server.domain.smokemyplace.api;
 
 import lombok.RequiredArgsConstructor;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.application.UserSmokeService;
 import org.springframework.web.bind.annotation.*;
 import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
-import org.ohmystomach.ohmystomach_server.smokemyplace.domain.UserSmoke;
-import org.ohmystomach.ohmystomach_server.smokemyplace.application.UserSmokeService;
+import org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain.UserSmoke;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * 사용자가 저장한 흡연구역 데이터와 관련된 요청을 처리하는 컨트롤러.
  */
 @RestController
-@RequestMapping("/api/user-smokes")
+@RequestMapping("/api/my/smoke")
 @RequiredArgsConstructor
 public class UserSmokeController {
     // UserSmokeService 의존성 주입, 사용자가 저장한 흡연구역 관련 비즈니스 로직 처리

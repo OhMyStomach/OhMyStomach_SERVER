@@ -1,4 +1,4 @@
-package org.ohmystomach.ohmystomach_server.toiletmyplace.domain;
+package org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.apache.catalina.User;
+import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
 import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 
 @Entity
@@ -15,7 +16,7 @@ import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserToilet {
+public class UserSmoke {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,10 +25,11 @@ public class UserToilet {
     private User user;
 
     @ManyToOne
-    private Toilet toilet;
+    private Smoke smoke;
 
-    public UserToilet(Long userId, Toilet toilet) {
+    public UserSmoke(Long userId, Smoke smoke) {
         this.userId = userId;
-        this.toilet = toilet;
+        this.smoke = smoke;
     }
 }
+
