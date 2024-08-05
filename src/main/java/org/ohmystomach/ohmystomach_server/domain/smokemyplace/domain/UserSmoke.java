@@ -1,15 +1,13 @@
 package org.ohmystomach.ohmystomach_server.domain.smokemyplace.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ohmystomach.ohmystomach_server.domain.smoke.domain.Smoke;
 import org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request.UpdateUserSmokeServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
 
 @Entity
 @Data
@@ -23,13 +21,18 @@ public class UserSmoke {
 
 //    @ManyToOne
 //    private User user;
-    private String userId;
+//    private String userId;
 
 
     private String name;
     private String location;
     private String detailLocation;
     private String memo;
+
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
+    private User user;
 
 //    public UserSmoke(Long userId, Smoke smoke) {
 ////        this.userId = userId;

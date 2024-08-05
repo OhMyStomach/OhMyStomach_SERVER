@@ -1,11 +1,10 @@
 package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.*;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletServiceRequestDto;
+import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
 
 @Entity
 @Data
@@ -29,7 +28,7 @@ public class UserToilet {
 //    private Double wsg84y;  // WSG84Y
 
 //    private String uuid;
-    private String userId;
+//    private String userId;
 
     private String name;
     private String location;
@@ -38,6 +37,11 @@ public class UserToilet {
     private String time;
     private String toiletPaper;
     private String memo;
+
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
+    private User user;
 
 //    public UserToilet(Long userId, Toilet toilet) {
 ////        this.userId = userId;
