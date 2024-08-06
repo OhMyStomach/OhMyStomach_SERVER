@@ -18,7 +18,7 @@ public class Toilet {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;  // 이름
-  private String category;  // 구분
+  private String type;  // 구분
   private Double wsg84x;  // WSG84X
   private Double wsg84y;  // WSG84Y
 }

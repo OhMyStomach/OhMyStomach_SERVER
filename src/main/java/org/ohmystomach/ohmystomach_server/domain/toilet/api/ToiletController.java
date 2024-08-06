@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.ohmystomach.ohmystomach_server.domain.toilet.application.ToiletService;
 import org.ohmystomach.ohmystomach_server.domain.toilet.domain.Toilet;
 import org.ohmystomach.ohmystomach_server.global.common.response.ApiResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +31,12 @@ public class ToiletController {
   public ApiResponse<Toilet> retrieveToiletById(@PathVariable Long id) {
     // 서비스에서 ID로 공중화장실을 찾아 ApiResponse로 감싸서 반환
     return toiletService.retrieveToiletById(id);
+  }
+
+  @Operation(summary = "데이터 기입 API")
+  @GetMapping("/pushdata")
+  public ApiResponse<String> pushData() {
+    toiletService.pushData();
+    return ApiResponse.ok("성공함 ㅋㅋㅋ 못할 줄 알았냐?");
   }
 }

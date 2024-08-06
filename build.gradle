@@ -49,6 +49,10 @@ dependencies {
 
     // s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // csv
+    implementation 'org.apache.commons:commons-csv:1.10.0'
+    implementation 'com.opencsv:opencsv:5.5.2'
 }
 
 tasks.named('test') {

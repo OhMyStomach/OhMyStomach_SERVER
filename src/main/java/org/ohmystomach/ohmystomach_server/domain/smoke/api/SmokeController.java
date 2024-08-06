@@ -32,4 +32,11 @@ public class SmokeController {
         return smokeService.retrieveSmokeById(id);
     }
 
+    @Operation(summary = "데이터 기입 API")
+    @GetMapping("/pushdata")
+    public ApiResponse<String> pushData() {
+        smokeService.pushData();
+        return ApiResponse.ok("성공함 ㅋㅋㅋ 못할 줄 알았냐?");
+    }
+
 }
