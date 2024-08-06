@@ -33,10 +33,10 @@ public class ToiletController {
     return toiletService.retrieveToiletById(id);
   }
 
-  @Operation(summary = "데이터 기입 API")
-  @GetMapping("/pushdata")
-  public ApiResponse<String> pushData() {
-    toiletService.pushData();
-    return ApiResponse.ok("성공함 ㅋㅋㅋ 못할 줄 알았냐?");
-  }
+//  @Operation(summary = "데이터 기입 API")
+//  @GetMapping("/pushdata")
+//  public ApiResponse<String> pushData() {
+//    toiletService.pushData();
+//    return ApiResponse.ok("성공함 ㅋㅋㅋ 못할 줄 알았냐?");
+//  }
 }
