@@ -83,6 +83,14 @@ public class OAuthController {
 //      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
 //    }
   }
+
+  @Operation(summary="로그아웃 API", description = "카카오 로그아웃 API")
+  @GetMapping("logout")
+  public ApiResponse<String> kakaoLogout(@RequestHeader("Authorization") String token) {
+    return kakaoService.logout();
+  }
+
+
 ////
 //////  @Value("${kakao.auth-url}")
 //////  private String authUrl;

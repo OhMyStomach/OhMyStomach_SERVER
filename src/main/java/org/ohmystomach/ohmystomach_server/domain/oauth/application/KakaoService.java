@@ -73,4 +73,8 @@ public class KakaoService {
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .block(); // 비동기 처리 시 block() 사용 자제, 여기서는 예제 단순화를 위해 사용
     }
+
+    public ApiResponse<String> logout() {
+        return ApiResponse.ok("로그아웃 되었습니다.");
+    }
 }
