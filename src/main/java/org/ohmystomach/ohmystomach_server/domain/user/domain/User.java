@@ -27,6 +27,10 @@ public class User {
     @Id
     private String id;
 
+    private Long accessToken;
+
+    private Long refreshToken;
+
     private String nickname;
 
     private String email;
