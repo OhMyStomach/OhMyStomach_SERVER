@@ -40,6 +40,12 @@ public class User {
     // 이미지 파일 이름 유무로 사진이 카카오 이미지인지 아닌지 구분
     private String profileImageFileName;
 
+    private String kakaoAccessToken;
+
+    private String kakaoRefreshToken;
+
+    private Long kakaoAccessTokenExpiresAt;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<UserSmoke> userSmokes = new ArrayList<>();

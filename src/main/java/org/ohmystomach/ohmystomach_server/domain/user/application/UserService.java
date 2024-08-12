@@ -1,6 +1,7 @@
 package org.ohmystomach.ohmystomach_server.domain.user.application;
 
 import lombok.RequiredArgsConstructor;
+import org.ohmystomach.ohmystomach_server.domain.oauth.application.KakaoService;
 import org.ohmystomach.ohmystomach_server.domain.user.dao.UserRepository;
 import org.ohmystomach.ohmystomach_server.domain.user.domain.User;
 import org.ohmystomach.ohmystomach_server.domain.user.dto.request.UpdateUserRequestServiceDto;
@@ -19,9 +20,10 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final S3Adapter s3Adapter;
-
+    private final KakaoService kakaoService;
 
     public ApiResponse<User> retrieveOrCreateUser(Map<String, Object> userInfo) {
         String uuid = userInfo.get("id").toString();
@@ -103,5 +105,32 @@ public class UserService {
         user.update(dto, profileImageFileName, profileImageUrl);
         User savedUser = userRepository.save(user);
         return ApiResponse.ok("사용자 정보를 성공적으로 수정했습니다.", savedUser);
+    }
+
+    public ApiResponse<User> invalidateUserSession(String userId) {
+        // 세션 무효화 또는 로그아웃 상태로 전환
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isEmpty()) {
+            ApiResponse.withError(ErrorCode.INVALID_USER_ID);
+        }
+        User user = optionalUser.get();
+//        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setKakaoAccessToken(null);
+        user.setKakaoRefreshToken(null);
+        User savedUser = userRepository.save(user);
+        return ApiResponse.ok("로그아웃 되었습니다.", savedUser);
+    }
+
+    public String getValidAccessToken(User user) {
+        if (kakaoService.isAccessTokenExpired(user.getKakaoAccessTokenExpiresAt())) {
+            String newAccessToken = kakaoService.refreshAccessToken(user.getKakaoRefreshToken());
+            user.setKakaoAccessToken(newAccessToken);
+            // 토큰의 만료 시간을 갱신
+            Long newExpiresAt = 1000000000L;// 새 AccessToken의 만료 시간 계산
+            user.setKakaoAccessTokenExpiresAt(newExpiresAt);
+            userRepository.save(user);
+            return newAccessToken;
+        }
+        return user.getKakaoAccessToken();
     }
 }

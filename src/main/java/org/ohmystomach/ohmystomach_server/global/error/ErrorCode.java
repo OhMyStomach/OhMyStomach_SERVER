@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     // oAuth
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, "승인되지 않은 사용자입니다."),
+    KAKAO_LOGOUT_FAILED(HttpStatus.UNAUTHORIZED, "카카오 로그아웃에 실패했습니다."),
 
     // user
     INVALID_USER_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 USER 식별자입니다."),

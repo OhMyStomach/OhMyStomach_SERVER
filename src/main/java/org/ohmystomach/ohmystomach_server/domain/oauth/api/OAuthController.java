@@ -74,7 +74,25 @@ public class OAuthController {
     if(!jwtService.validateToken(jwt)) {
       return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
     }
-    return userService.retrieveUser(jwtService.decodeToken(jwt));
+
+    String userId = jwtService.decodeToken(jwt);
+    ApiResponse<User> response = userService.retrieveUser(userId);
+    User user = response.getData();
+
+    // 유효한 AccessToken 확보
+    String accessToken = userService.getValidAccessToken(user);
+
+    // 필요 시 accessToken을 사용하여 추가 작업 수행
+    return response;
+  }
+//  @Operation(summary="유저 정보 조회 API", description = "JWT 토큰으로 유저 정보 조회 API")
+//  @GetMapping("/user")
+//  public ApiResponse<User> getUserInfo(@RequestHeader("Authorization") String token) {
+//    String jwt = token.substring(7); // "Bearer " 제거
+//    if(!jwtService.validateToken(jwt)) {
+//      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
+//    }
+//    return userService.retrieveUser(jwtService.decodeToken(jwt));
 //    if (jwtTokenProvider.validateToken(jwt)) {
 //      String uuid = jwtTokenProvider.getUuid(jwt);
 //      User user = userRepository.findById(uuid).orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -82,15 +100,34 @@ public class OAuthController {
 //    } else {
 //      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
 //    }
-  }
+//  }
 
   @Operation(summary="로그아웃 API", description = "카카오 로그아웃 API")
   @GetMapping("logout")
-  public ApiResponse<String> kakaoLogout(@RequestHeader("Authorization") String token) {
-    return kakaoService.logout();
+  public ApiResponse<Boolean> kakaoLogout(@RequestHeader("Authorization") String token) {
+    if (!jwtService.validateToken(token)) {
+      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
+    }
+    // JWT에서 사용자 ID 추출
+    String userId = jwtService.decodeToken(token);
+
+    // 사용자 정보에서 카카오 액세스 토큰 가져오기
+    User user = userService.retrieveUser(userId).getData();
+    String accessToken = user.getKakaoAccessToken();
+
+    // 1. 카카오 로그아웃 요청
+    ApiResponse<Boolean> response = kakaoService.logout(accessToken);
+    boolean kakaoLogoutSuccess = response.getData();
+    if (!kakaoLogoutSuccess) {
+      return ApiResponse.withError(ErrorCode.KAKAO_LOGOUT_FAILED);
+    }
+
+    // 2. 서버 측에서 세션 무효화 또는 상태 관리
+//    return userService.invalidateUserSession(userId);
+
+//    return ApiResponse.ok();
+    return response;
   }
-
-
 ////
 //////  @Value("${kakao.auth-url}")
 //////  private String authUrl;
@@ -129,4 +166,30 @@ public class OAuthController {
 ////////  public Mono<ApiResponse<Map<String, Object>>> userinfo() {
 ////////    return oAuthService.getCurrentUserInfo();
 ////////  }
+//  @Operation(summary="로그아웃 API", description = "카카오 로그아웃 API")
+//  @PostMapping("/logout")
+//  public ApiResponse<User> logout(@RequestHeader("Authorization") String token) {
+//    String jwt = token.substring(7);
+//    if (!jwtService.validateToken(jwt)) {
+//      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
+//    }
+//
+//    // JWT에서 사용자 ID 추출
+//    String userId = jwtService.decodeToken(jwt);
+//
+//    // 사용자 정보에서 카카오 액세스 토큰 가져오기
+//    User user = userService.retrieveUser(userId).getData();
+//    String accessToken = user.getKakaoAccessToken();
+//
+//    // 1. 카카오 로그아웃 요청
+//    boolean kakaoLogoutSuccess = kakaoService.logout(accessToken);
+//    if (!kakaoLogoutSuccess) {
+//      return ApiResponse.withError(ErrorCode.KAKAO_LOGOUT_FAILED);
+//    }
+//
+//    // 2. 서버 측에서 세션 무효화 또는 상태 관리
+//    return userService.invalidateUserSession(userId);
+//
+////    return ApiResponse.ok();
+//  }
 }

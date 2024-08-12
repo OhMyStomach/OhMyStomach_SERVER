@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Instant;
 import java.util.Map;
 
 @Service
@@ -74,7 +75,44 @@ public class KakaoService {
                 .block(); // 비동기 처리 시 block() 사용 자제, 여기서는 예제 단순화를 위해 사용
     }
 
-    public ApiResponse<String> logout() {
-        return ApiResponse.ok("로그아웃 되었습니다.");
+//    public ApiResponse<String> logout(String accessToken) {
+//        return ApiResponse.ok("로그아웃 되었습니다.");
+
+    public boolean isAccessTokenExpired(Long expiresAt) {
+        // AccessToken의 만료 여부를 검사하는 로직 구현
+        // 이는 보통 accessToken의 만료 시간 정보가 포함된 payload를 디코딩하여 확인
+        // 실제 구현에는 외부 라이브러리나 카카오 제공 API를 사용할 수 있습니다.
+        return Instant.now().isAfter(Instant.ofEpochMilli(expiresAt));
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        Map<String, String> response = webClient.post()
+                .uri(uriBuilder -> uriBuilder.path("/oauth/token")
+                        .queryParam("grant_type", "refresh_token")
+                        .queryParam("client_id", clientId)
+                        .queryParam("client_secret", clientSecret)
+                        .queryParam("refresh_token", refreshToken)
+                        .build())
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+
+        if (response == null || !response.containsKey("access_token")) {
+            throw new RuntimeException("Failed to refresh access token");
+        }
+
+        return response.get("access_token");
+    }
+
+    // 로그아웃 메소드 추가
+    public ApiResponse<Boolean> logout(String accessToken) {
+        Map<String, Object> response = webClient.post()
+                .uri("https://kapi.kakao.com/v1/user/logout")
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+
+        return ApiResponse.ok("로그아웃 되었습니다.", response != null && response.containsKey("id"));
     }
 }
