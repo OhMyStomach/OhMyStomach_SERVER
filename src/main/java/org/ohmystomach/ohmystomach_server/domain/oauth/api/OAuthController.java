@@ -105,6 +105,7 @@ public class OAuthController {
   @Operation(summary="로그아웃 API", description = "카카오 로그아웃 API")
   @GetMapping("logout")
   public ApiResponse<Boolean> kakaoLogout(@RequestHeader("Authorization") String token) {
+    String jwt = token.substring(7); // "Bearer " 제거
     if (!jwtService.validateToken(token)) {
       return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
     }
