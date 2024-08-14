@@ -117,17 +117,16 @@ public class OAuthController {
     String accessToken = user.getKakaoAccessToken();
 
     // 1. 카카오 로그아웃 요청
-    ApiResponse<Boolean> response = kakaoService.logout(accessToken);
-    boolean kakaoLogoutSuccess = response.getData();
+    ApiResponse<Boolean> kakaoResponse = kakaoService.logout(accessToken);
+    boolean kakaoLogoutSuccess = kakaoResponse.getData();
     if (!kakaoLogoutSuccess) {
       return ApiResponse.withError(ErrorCode.KAKAO_LOGOUT_FAILED);
     }
 
     // 2. 서버 측에서 세션 무효화 또는 상태 관리
-//    return userService.invalidateUserSession(userId);
+    userService.invalidateUserSession(userId);
 
-//    return ApiResponse.ok();
-    return response;
+    return kakaoResponse;
   }
 ////
 //////  @Value("${kakao.auth-url}")
