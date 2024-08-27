@@ -20,7 +20,7 @@ public class ToiletController {
   private final ToiletService toiletService;
 
   @Operation(summary = "공중화장실 전체 조회 API")
-  @GetMapping
+  @GetMapping("all")
   public ApiResponse<List<Toilet>> retrieveAllToilets() {
     // 서비스에서 모든 공중화장실을 가져와 ApiResponse로 감싸서 반환
     return toiletService.retrieveAllToilets();
