@@ -11,9 +11,9 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI(){
         return new OpenAPI()
                 .info(new Info()
-                        .title("흡변 API")
+                        .title("흡변구역 API")
                         .version("v1.0.0").
-                        description("아이고배야 팀에서 만든 흡변 서비스 API입니다.")
+                        description("아이고배야 팀에서 만든 흡변구역 서비스 API입니다.")
                 );
     }
 }
