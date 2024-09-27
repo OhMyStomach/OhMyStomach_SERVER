@@ -1,7 +1,6 @@
 package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request;
 
 public record UpdateUserToiletRequestDto(
-    String token,
     Long toiletId,
     String name,
     String location,

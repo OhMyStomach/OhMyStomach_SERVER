@@ -1,7 +1,6 @@
 package org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request;
 
 public record CreateUserToiletRequestDto (
-    String token,
     String name,
     String location,
     String detailLocation,

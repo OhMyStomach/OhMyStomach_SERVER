@@ -46,8 +46,9 @@ public class UserToiletController {
      */
     @Operation(summary = "내 화장실 정보 생성 api", description = "새로운 화장실을 사용자의 내 장소로 저장합니다.")
     @PostMapping("/save")
-    public ApiResponse<UserToilet> createUserToilet(@RequestBody CreateUserToiletRequestDto dto) {
-        return userToiletService.createUserToilet(dto.toServiceDto(jwtService.decodeToken(dto.token())));
+    public ApiResponse<UserToilet> createUserToilet(@RequestHeader("Authorization") String token,
+                                                    @RequestBody CreateUserToiletRequestDto dto) {
+        return userToiletService.createUserToilet(dto.toServiceDto(jwtService.decodeToken(token)));
     }
 
     /**
@@ -74,7 +75,8 @@ public class UserToiletController {
      */
     @Operation(summary = "내 화장실 정보 수정 api", description = "사용자가 내 장소로 저장한 화장실의 정보를 업데이트합니다.")
     @PutMapping("/edit")
-    public ApiResponse<UserToilet> updateUserToilet(@RequestBody UpdateUserToiletRequestDto dto) {
-        return userToiletService.updateUserToilet(dto.toServiceDto(jwtService.decodeToken(dto.token())));
+    public ApiResponse<UserToilet> updateUserToilet(@RequestHeader("Authorization") String token,
+                                                    @RequestBody UpdateUserToiletRequestDto dto) {
+        return userToiletService.updateUserToilet(dto.toServiceDto(jwtService.decodeToken(token)));
     }
 }
