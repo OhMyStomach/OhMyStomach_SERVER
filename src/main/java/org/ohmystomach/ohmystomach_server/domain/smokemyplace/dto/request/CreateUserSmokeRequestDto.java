@@ -1,7 +1,6 @@
 package org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request;
 
 public record CreateUserSmokeRequestDto(
-    String token,
     String name,
     String location,
     String detailLocation,

@@ -3,7 +3,6 @@ package org.ohmystomach.ohmystomach_server.domain.smokemyplace.dto.request;
 import org.ohmystomach.ohmystomach_server.domain.toiletmyplace.dto.request.UpdateUserToiletServiceRequestDto;
 
 public record UpdateUserSmokeRequestDto(
-    String token,
     Long smokeId,
     String name,
     String location,

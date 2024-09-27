@@ -46,8 +46,9 @@ public class UserSmokeController {
      */
     @Operation(summary = "내 흡연구역 정보 생성 api", description = "새로운 흡연구역을 사용자의 내 장소로 저장합니다.")
     @PostMapping("/save")
-    public ApiResponse<UserSmoke> createUserSmoke(@RequestBody CreateUserSmokeRequestDto dto) {
-        return userSmokeService.createUserSmoke(dto.toServiceDto(jwtService.decodeToken(dto.token())));
+    public ApiResponse<UserSmoke> createUserSmoke(@RequestHeader("Authorization") String token,
+                                                  @RequestBody CreateUserSmokeRequestDto dto) {
+        return userSmokeService.createUserSmoke(dto.toServiceDto(jwtService.decodeToken(token)));
     }
 
     /**
@@ -74,7 +75,8 @@ public class UserSmokeController {
      */
     @Operation(summary = "내 흡연구역 정보 수정 api", description = "사용자가 내 장소로 저장한 흡연구역의 정보를 업데이트합니다.")
     @PutMapping("/edit")
-    public ApiResponse<UserSmoke> updateUserSmoke(@RequestBody UpdateUserSmokeRequestDto dto) {
-        return userSmokeService.updateUserSmoke(dto.toServiceDto(jwtService.decodeToken(dto.token())));
+    public ApiResponse<UserSmoke> updateUserSmoke(@RequestHeader("Authorization") String token,
+                                                  @RequestBody UpdateUserSmokeRequestDto dto) {
+        return userSmokeService.updateUserSmoke(dto.toServiceDto(jwtService.decodeToken(token)));
     }
 }
