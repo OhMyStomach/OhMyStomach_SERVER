@@ -19,6 +19,9 @@ public class Smoke {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String district;
+    private String coordinates;
     private String type;
     private String location;
+    private Double wsg84x;  // WSG84X
+    private Double wsg84y;  // WSG84Y
 }
