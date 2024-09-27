@@ -66,7 +66,18 @@ public class OAuthController {
 ////////    return jwtTokenProvider.createToken(userService.retrieveOrCreateUser(userInfo).getData().getId());
     return jwtService.encodeToken(userService.retrieveOrCreateUser(userInfo).getData().getId());
   }
-//
+
+  @Operation(summary="refreshToken 발급 API")
+  @GetMapping("/refreshToken")
+  public ApiResponse<String> createRefreshToken(@RequestHeader("Authorization") String token) {
+    String jwt = token.substring(7); // "Bearer " 제거
+    if(!jwtService.validateToken(jwt)) {
+      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
+    }
+    return jwtService.createRefreshToken(jwtService.decodeToken(jwt));
+  }
+
+
   @Operation(summary="유저 정보 조회 API", description = "JWT 토큰으로 유저 정보 조회 API")
   @GetMapping("/user")
   public ApiResponse<User> getUserInfo(@RequestHeader("Authorization") String token) {
