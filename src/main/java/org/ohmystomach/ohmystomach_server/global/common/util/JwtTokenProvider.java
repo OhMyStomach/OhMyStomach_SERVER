@@ -18,6 +18,9 @@ public class JwtTokenProvider {
     @Value("${jwt.access-token.expire-length}")
     private long expiration;
 
+    @Value("${jwt.refresh-token.expire-length}")
+    private long refreshTokenExpiration;
+
 //    private final UserDetailsService userDetailsService;
 
 //    public JwtTokenProvider(UserDetailsService userDetailsService) {
@@ -29,6 +32,20 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(uuid);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expiration);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
+
+    // JWT 생성 - 리프레시 토큰
+    public String createRefreshToken(String uuid) {
+        Claims claims = Jwts.claims().setSubject(uuid);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshTokenExpiration);
 
         return Jwts.builder()
                 .setClaims(claims)

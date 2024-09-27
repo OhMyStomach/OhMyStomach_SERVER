@@ -121,4 +121,18 @@ public class OAuthController {
 ////////  public Mono<ApiResponse<Map<String, Object>>> userinfo() {
 ////////    return oAuthService.getCurrentUserInfo();
 ////////  }
+
+  @Operation(summary = "리프레시 토큰을 통한 액세스 토큰 재발급 API")
+  @PostMapping("/refresh")
+  public ApiResponse<String> refreshAccessToken(@RequestHeader("Authorization") String refreshToken) {
+    String jwt = refreshToken.substring(7); // "Bearer " 제거
+    if (!jwtService.validateRefreshToken(jwt)) {
+      return ApiResponse.withError(ErrorCode.UNAUTHORIZED_ERROR);
+    }
+
+    // 리프레시 토큰이 유효한 경우 새로운 액세스 토큰 발급
+    String uuid = jwtService.decodeToken(jwt);
+
+    return jwtService.encodeToken(uuid);
+  }
 }
