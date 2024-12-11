@@ -1,4 +1,4 @@
-# <공공 화장실 & 흡연구역 지도 서비스, 흡변구역> Spring Server 코드
+# 공공 화장실 & 흡연구역 지도 서비스, 흡변구역
 **2024 [멋쟁이사자처럼 대학](https://likelion.university/) 12기 중앙 해커톤, [어흥콘](https://ryuseunghan.notion.site/2024-d3216bd249b8427caca1e38913c9238c) 출품작**
 
 <p align="center">
