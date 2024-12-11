@@ -3,14 +3,14 @@
 
 <p align="center">
     <a href="https://likelion.university">
-      <img src="../assets/likelion_hackathon_banner.png" width="47.5%" />
+      <img src="https://github.com/user-attachments/assets/f775ca4b-06a4-410e-9d43-65947c379f6a" width="47.5%" />
     </a>
     <a href="https://ryuseunghan.notion.site/2024-d3216bd249b8427caca1e38913c9238c">
-      <img src="../assets/eoheungcon_banner.png" width="52%" />
+      <img src="https://github.com/user-attachments/assets/7ce1eaba-4d9b-40b4-906a-8db1c54f9af3" width="52%" />
     </a>
 </p>
 
-[![Poster](../assets/포스터.png)](https://www.smoilet.site/)
+[![Poster](https://github.com/user-attachments/assets/f559767e-8731-44e8-bf60-e9fa2677a305)](https://www.smoilet.site/)
 
 <br/>
 
